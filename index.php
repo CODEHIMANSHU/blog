@@ -13,6 +13,11 @@
   </head>
   <body>
     <header>
+      <?php
+        session_start();
+        $link=mysql_connect('localhost','root','');
+        $db=mysql_select_db("blog",$link) or die("Error in Database");
+      ?>    
       My Blog
       <!--login-->
       Login
@@ -23,6 +28,32 @@
         <input type="password" name="password" required>
         <button type="submit" name="login" value="Login">Login</button>
       </form>
+      <?php
+      if(isset($_POST["login"]))
+      {
+        $name=$_POST["name"];
+        $password=$_POST["password"];
+        $result=mysql_query("SELECT * FROM user WHERE username='$name' AND password='$password'",$link);
+        $count=mysql_num_rows($result);
+        if($count)
+        {
+          header("location:dashboard.php");
+          $_SESSION['login_status1']=true;
+        }
+        else
+        {
+          $result=mysql_query("SELECT * FROM admin WHERE name='$name' AND password='$password'",$link);
+          $count=mysql_num_rows($result);
+          if($count)
+          {
+            header("location:admin.php");
+            $_SESSION['login_status2']=true;
+          }
+          else
+            echo "Wrong Username or Password";
+        }
+      }
+      ?>
       <!--signup-->
       Sign Up
       <form action="" method="post">
@@ -37,14 +68,21 @@
         <button type="submit" name="signup" value="Signup">Sign Up</button>
       </form>
       <?php
-        if(isset($_POST["login"]))
+        if(isset($_POST["signup"]))
         {
-          echo "Hello";
+          $name=$_POST["name"];
+          $email=$_POST["email"];
+          $mobile=$_POST["mobile"];
+          $password=$_POST["password"];
+          $result=$db->query("SELECT * FROM user WHERE username=$name");
+          $rows=$result->fetch_all["MYSQLI_ASSOC"];
         }
       ?>
     </header>
     <section>
+      <?php
 
+      ?>
     </section>
     <footer>
       

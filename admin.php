@@ -12,16 +12,29 @@
     </title>
   </head>
   <body>
-  	<?php
+    <?php
       session_start();
-  	  $db=mysqli_connect("localhost", "root", "", "blog");
-  	  if(isset($_SESSION['login_status'])==false)
+      $link=mysql_connect('localhost','root','');
+      $db=mysql_select_db("blog",$link) or die("Error in Database");
+    ?>    
+  	<?php
+  	  if(isset($_SESSION['login_status2'])==false)
   	  {
   	  	echo "You are not logged in.";
   	  	//POP UP
   	  	header('location:index.php');
   	  }
-  	  echo "Welcome User";
+  	  echo "Welcome Admin";
+    ?>
+    <form action="" method="post">
+    <button type="submit" name="logout">LOGOUT</div>
+    <?php
+      if(isset($_POST["logout"]))
+      {
+        $_SESSION['login_statu2']=false;
+        session_destroy();
+        header('location:index.php');
+      }
   	?>
   	<header>
   	
