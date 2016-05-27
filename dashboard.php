@@ -12,34 +12,56 @@
     </title>
   </head>
   <body>
-    <?php
-      session_start();
-      $link=mysql_connect('localhost','root','');
-      $db=mysql_select_db("blog",$link) or die("Error in Database");
-    ?>    
-  	<?php
-  	  if(isset($_SESSION['login_status1'])==false)
-  	  {
-  	  	echo "You are not logged in.";
-  	  	//POP UP
-  	  	header('location:index.php');
-  	  }
-      echo "Welcome User";
-    ?>
-    <form action="" method="post">
-    <button type="submit" name="logout">LOGOUT</div>
-    <?php
-      if(isset($_POST["logout"]))
-      {
-        $_SESSION['login_status1']=false;
-        session_destroy();
-        header('location:index.php');
-      }
-    ?>
-  	<header>
-  	  
+    <header>
+      <?php
+        session_start();
+        $link=mysql_connect('localhost','root','') or die(mysql_error());
+        $db=mysql_select_db("blog",$link) or die(mysql_error());
+      ?>    
+    	<?php
+    	  if(isset($_SESSION['login_status1'])==false)
+    	  {
+    	  	echo "You are not logged in.";
+    	  	//POP UP
+    	  	header('location:index.php');
+    	  }
+        echo "Welcome User";
+      ?>
+      <form action="" method="post">
+      <button type="submit" name="logout">LOGOUT</div>
+      <?php
+        if(isset($_POST["logout"]))
+        {
+          $_SESSION['login_status1']=false;
+          session_destroy();
+          header('location:index.php');
+        }
+      ?>	  
   	</header>
   	<section>
+      <?php
+        $posts=mysql_query("SELECT * FROM post ORDER BY date DESC LIMIT 5") or die(mysql_error());
+        while($post=mysql_fetch_assoc($posts))
+        {
+          echo "Author: ", $post["auther"];
+          echo " Date: ", $post["date"];
+          echo " Time: ", $post["time"];
+          echo " Heading: ", $post["heading"];
+          echo " Content: ", $post["content"];
+          echo " Likes: ", $post["likes"], "<br>";
+          $id=$post["id"];
+          $comments=mysql_query("SELECT * FROM comments WHERE id='$id' LIMIT 5") or die(mysql_error());
+          $count=mysql_num_rows($comments);
+          if($count)
+            echo " Comments: ";
+          while($comment=mysql_fetch_assoc($comments))
+          {
+            echo "User: ", $comment["username"];
+            echo " ", $comment["comment"], " ";
+          }
+          echo "<br><br>";
+        }
+      ?>
 
   	</section>
     <footer>

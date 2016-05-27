@@ -15,8 +15,16 @@
     <header>
       <?php
         session_start();
-        $link=mysql_connect('localhost','root','');
-        $db=mysql_select_db("blog",$link) or die("Error in Database");
+        $link=mysql_connect('localhost','root','') or die(mysql_error());
+        $db=mysql_select_db("blog",$link) or die("Error in Database") or die(mysql_error());
+        if(!isset($_SESSION['login_status1']))
+        $_SESSION['login_status1']=NULL;
+        if(!isset($_SESSION['login_status2']))
+        $_SESSION['login_status2']=NULL;        
+        if($_SESSION['login_status1']==true)
+          header("Location:dashboard.php");
+        if($_SESSION['login_status2']==true)
+          header("Location:admin.php");        
       ?>    
       My Blog
       <!--login-->
@@ -37,8 +45,9 @@
         $count=mysql_num_rows($result);
         if($count)
         {
-          header("location:dashboard.php");
           $_SESSION['login_status1']=true;
+          $_SESSION['user']=$name;
+          header("location:dashboard.php");
         }
         else
         {
@@ -46,8 +55,9 @@
           $count=mysql_num_rows($result);
           if($count)
           {
-            header("location:admin.php");
             $_SESSION['login_status2']=true;
+            $_SESSION['user']=$name;
+            header("location:admin.php");
           }
           else
             echo "Wrong Username or Password";
@@ -74,14 +84,58 @@
           $email=$_POST["email"];
           $mobile=$_POST["mobile"];
           $password=$_POST["password"];
-          $result=$db->query("SELECT * FROM user WHERE username=$name");
-          $rows=$result->fetch_all["MYSQLI_ASSOC"];
+          $result1=mysql_query("SELECT * FROM user WHERE username='$name'",$link);
+          $result2=mysql_query("SELECT * FROM user WHERE email='$email'",$link);
+          $result3=mysql_query("SELECT * FROM admin WHERE name='$name'",$link);
+          $count1=mysql_num_rows($result1);
+          $count2=mysql_num_rows($result2);
+          $count3=mysql_num_rows($result3);
+          if($count1)
+          {
+            echo "Username already exists";
+          }
+          else
+            if($count2)
+            {
+              echo "Email already exists";
+            }
+            else
+              if($count3)
+              {
+                echo "Username already exists";
+              }
+              else
+              {
+                $result=mysql_query("INSERT INTO user VALUES ('$name','$password','$mobile','$email','0')",$link) or die(mysql_error());
+                if($result)
+                  echo "Sign Up Successful. Please Login!!!";
+              }
         }
       ?>
     </header>
     <section>
       <?php
-
+        $posts=mysql_query("SELECT * FROM post ORDER BY date DESC LIMIT 5") or die(mysql_error());
+        while($post=mysql_fetch_assoc($posts))
+        {
+          echo "Author: ", $post["auther"];
+          echo " Date: ", $post["date"];
+          echo " Time: ", $post["time"];
+          echo " Heading: ", $post["heading"];
+          echo " Content: ", $post["content"];
+          echo " Likes: ", $post["likes"], "<br>";
+          $id=$post["id"];
+          $comments=mysql_query("SELECT * FROM comments WHERE id='$id' LIMIT 5") or die(mysql_error());
+          $count=mysql_num_rows($comments);
+          if($count)
+            echo " Comments:  ";            
+          while($comment=mysql_fetch_assoc($comments))
+          {
+            echo "User: ", $comment["username"];
+            echo " ", $comment["comment"], " ";
+          }
+          echo "<br><br>";
+        }
       ?>
     </section>
     <footer>
