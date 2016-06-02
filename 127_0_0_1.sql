@@ -1,21 +1,3 @@
--- phpMyAdmin SQL Dump
--- version 4.5.1
--- http://www.phpmyadmin.net
---
--- Host: 127.0.0.1
--- Generation Time: May 13, 2016 at 11:19 AM
--- Server version: 10.1.10-MariaDB
--- PHP Version: 5.5.33
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
 --
 -- Database: `blog`
 --
@@ -30,18 +12,59 @@ USE `blog`;
 
 CREATE TABLE `admin` (
   `name` varchar(20) NOT NULL,
-  `password` varchar(20) NOT NULL,
-  `posts` varchar(100) NOT NULL
+  `password` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `admin`
 --
 
-INSERT INTO `admin` (`name`, `password`, `posts`) VALUES
-('admin1', 'admin1', ''),
-('admin2', 'admin2', ''),
-('admin3', 'admin3', '');
+INSERT INTO `admin` (`name`, `password`) VALUES
+('admin1', 'admin1'),
+('admin2', 'admin2'),
+('admin3', 'admin3');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `comments`
+--
+
+CREATE TABLE `comments` (
+  `reference` int(11) NOT NULL,
+  `id` int(11) NOT NULL,
+  `username` varchar(20) NOT NULL,
+  `comment` varchar(150) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `comments`
+--
+
+INSERT INTO `comments` (`reference`, `id`, `username`, `comment`) VALUES
+(1, 1, 'user2', 'Comment 1 for 1'),
+(2, 4, 'admin3', 'Comment 1 for 4'),
+(3, 1, 'user1', 'Comment 2 for 1'),
+(4, 1, 'user3', 'Comment 3 for 1'),
+(5, 3, 'user4', 'Comment 1 for 3'),
+(6, 7, 'user4', 'comment 1 for 7'),
+(7, 9, 'admin4', 'Comment 1 for 9'),
+(8, 8, 'user1', 'comment 1 for 8'),
+(9, 8, 'user3', 'comment 2 for 8'),
+(67, 8, 'admin1', 'A new comment for post 8'),
+(68, 9, 'admin1', 'A new comment for post 9'),
+(69, 8, 'admin1', 'kjbhkj'),
+(70, 8, 'admin1', 'kjhkl'),
+(71, 5, 'admin1', 'A new comment for post 5'),
+(72, 7, 'admin1', ''),
+(73, 7, 'admin1', ''),
+(74, 7, 'admin1', ''),
+(75, 7, 'admin1', 'xfh'),
+(76, 7, 'admin1', 'xfh'),
+(77, 7, 'admin1', ''),
+(78, 0, 'admin2', ''),
+(79, 7, 'admin2', ''),
+(80, 7, 'admin2', '');
 
 -- --------------------------------------------------------
 
@@ -56,18 +79,25 @@ CREATE TABLE `post` (
   `time` time NOT NULL,
   `heading` varchar(40) NOT NULL,
   `content` varchar(500) NOT NULL,
-  `likes` int(11) DEFAULT '0',
-  `comment` varchar(500) NOT NULL
+  `likes` int(11) DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `post`
 --
 
-INSERT INTO `post` (`id`, `auther`, `date`, `time`, `heading`, `content`, `likes`, `comment`) VALUES
-(1, 'admin1', '2016-05-04', '01:13:25', 'POST1', '<b>Hall</b><br>Helloskipzdscikihi swdihiaesdhkijawdhi aesdiuhid ijshdkj sdkcghkli ', 0, ''),
-(2, 'admin3', '2016-05-04', '10:37:31', 'POST2', 'kfnhvknh<dflse>sEF,m;lesf.df', 0, ''),
-(3, 'admin1', '2016-05-04', '00:00:33', 'POST31', 'klfhklnxk;ldndgklfbxdftbhxfgbxfgb', 0, '');
+INSERT INTO `post` (`id`, `auther`, `date`, `time`, `heading`, `content`, `likes`) VALUES
+(1, 'admin1', '2016-05-04', '01:13:25', 'POST1', '<b>Good Luck</b><br>This is my first post. ', 0),
+(2, 'admin3', '2016-05-04', '10:37:31', 'POST2', 'This is second Post.', 4),
+(3, 'admin1', '2016-05-04', '00:00:33', 'POST31', 'Third post thgis is....', 0),
+(4, 'admin2', '2016-05-10', '00:22:14', 'Helllllo', 'A new post added.', 1),
+(5, 'admin1', '2016-05-27', '00:00:23', 'POST5', 'This is 5th POst', 0),
+(6, 'admin1', '2016-05-27', '00:00:23', 'POST6', 'Hi, Post6 added', 0),
+(7, 'admin1', '2016-05-27', '23:35:42', 'POST7', 'This is a new post as 7th one.', 0),
+(8, 'admin1', '2016-05-27', '00:00:23', 'POST8', '8th Post', 10),
+(9, 'admin1', '2016-05-27', '23:39:43', 'POST9', '9th Post', 0),
+(10, 'admin1', '2016-05-28', '14:23:18', 'POST 10', 'Hi<b>this is a new post</b> See how it looks....', 0),
+(11, 'admin1', '2016-05-28', '16:52:54', 'POST11', 'dfklg,xdfkogm kmdfk jkkkkkkkkkkkk XkG GFk k kkkkkkkkkkkkkkZXDFBkkkkkkkkkkkkkkkkkkkkkkkkkk  a s SddddddddddddsaaaVXFaaaaaaaaaaaaeo aoeiooSG Gooooooaew aewrrrrrrrrrrrrrrrrrrrrWEER;w KJDHEWKJLHDLkj whlkjeDKLAEWHD JHKJ JhebDBJL EDAESKJLFJESHJ LBFAKLEWHJDF', 0);
 
 -- --------------------------------------------------------
 
@@ -80,7 +110,7 @@ CREATE TABLE `user` (
   `password` varchar(20) NOT NULL,
   `mobile` bigint(20) NOT NULL,
   `email` varchar(30) NOT NULL,
-  `likes` varchar(100) NOT NULL
+  `likes` varchar(100) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -88,13 +118,21 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`username`, `password`, `mobile`, `email`, `likes`) VALUES
-('user1', 'user1', 111, '1@gmaill.com', ''),
-('user2', 'user2', 222, '2@gmail.com', ''),
-('user3', 'user3', 333, '3@gmail.com', '');
+('user1', 'user1', 111, '1@gmaill.com', '0'),
+('user2', 'user2', 222, '2@gmail.com', '0'),
+('user3', 'user3', 333, '3@gmail.com', '0'),
+('user4', 'user4', 444, '4@gmail.com', '0'),
+('user5', 'user5', 555, '5@gmail.com', '0');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `comments`
+--
+ALTER TABLE `comments`
+  ADD PRIMARY KEY (`reference`);
 
 --
 -- Indexes for table `post`
@@ -114,10 +152,15 @@ ALTER TABLE `user`
 --
 
 --
+-- AUTO_INCREMENT for table `comments`
+--
+ALTER TABLE `comments`
+  MODIFY `reference` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
+--
 -- AUTO_INCREMENT for table `post`
 --
 ALTER TABLE `post`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;--
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;--
 -- Database: `ide`
 --
 CREATE DATABASE IF NOT EXISTS `ide` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
@@ -472,7 +515,7 @@ CREATE TABLE `pma__export_templates` (
 --
 
 INSERT INTO `pma__export_templates` (`id`, `username`, `export_type`, `template_name`, `template_data`) VALUES
-(1, 'root', 'server', 'blog', '{"quick_or_custom":"quick","what":"sql","db_select[]":["blog","ide","mcq","phpmyadmin","test"],"output_format":"sendit","filename_template":"@SERVER@","remember_template":"on","charset":"utf-8","compression":"none","maxsize":"","codegen_structure_or_data":"data","codegen_format":"0","csv_separator":",","csv_enclosed":"\\"","csv_escaped":"\\"","csv_terminated":"AUTO","csv_null":"NULL","csv_structure_or_data":"data","excel_null":"NULL","excel_edition":"win","excel_structure_or_data":"data","htmlword_structure_or_data":"structure_and_data","htmlword_null":"NULL","json_structure_or_data":"data","latex_caption":"something","latex_structure_or_data":"structure_and_data","latex_structure_caption":"Structure of table @TABLE@","latex_structure_continued_caption":"Structure of table @TABLE@ (continued)","latex_structure_label":"tab:@TABLE@-structure","latex_relation":"something","latex_comments":"something","latex_mime":"something","latex_columns":"something","latex_data_caption":"Content of table @TABLE@","latex_data_continued_caption":"Content of table @TABLE@ (continued)","latex_data_label":"tab:@TABLE@-data","latex_null":"\\\\textit{NULL}","mediawiki_structure_or_data":"data","mediawiki_caption":"something","mediawiki_headers":"something","ods_null":"NULL","ods_structure_or_data":"data","odt_structure_or_data":"structure_and_data","odt_relation":"something","odt_comments":"something","odt_mime":"something","odt_columns":"something","odt_null":"NULL","pdf_report_title":"","pdf_structure_or_data":"data","phparray_structure_or_data":"data","sql_include_comments":"something","sql_header_comment":"","sql_compatibility":"NONE","sql_structure_or_data":"structure_and_data","sql_create_table":"something","sql_auto_increment":"something","sql_create_view":"something","sql_procedure_function":"something","sql_create_trigger":"something","sql_backquotes":"something","sql_type":"INSERT","sql_insert_syntax":"both","sql_max_query_size":"50000","sql_hex_for_binary":"something","sql_utc_time":"something","texytext_structure_or_data":"structure_and_data","texytext_null":"NULL","yaml_structure_or_data":"data","":null,"as_separate_files":null,"csv_removeCRLF":null,"csv_columns":null,"excel_removeCRLF":null,"excel_columns":null,"htmlword_columns":null,"json_pretty_print":null,"ods_columns":null,"sql_dates":null,"sql_relation":null,"sql_mime":null,"sql_use_transaction":null,"sql_disable_fk":null,"sql_views_as_tables":null,"sql_metadata":null,"sql_drop_database":null,"sql_drop_table":null,"sql_if_not_exists":null,"sql_truncate":null,"sql_delayed":null,"sql_ignore":null,"texytext_columns":null}');
+(1, 'root', 'server', 'blog', '{"quick_or_custom":"custom","what":"sql","db_select[]":["blog","ide","mcq","phpmyadmin","test"],"output_format":"sendit","filename_template":"@SERVER@","remember_template":"on","charset":"utf-8","compression":"zip","maxsize":"","codegen_structure_or_data":"data","codegen_format":"0","csv_separator":",","csv_enclosed":"\\"","csv_escaped":"\\"","csv_terminated":"AUTO","csv_null":"NULL","csv_structure_or_data":"data","excel_null":"NULL","excel_edition":"win","excel_structure_or_data":"data","htmlword_structure_or_data":"structure_and_data","htmlword_null":"NULL","json_structure_or_data":"data","latex_caption":"something","latex_structure_or_data":"structure_and_data","latex_structure_caption":"Structure of table @TABLE@","latex_structure_continued_caption":"Structure of table @TABLE@ (continued)","latex_structure_label":"tab:@TABLE@-structure","latex_relation":"something","latex_comments":"something","latex_mime":"something","latex_columns":"something","latex_data_caption":"Content of table @TABLE@","latex_data_continued_caption":"Content of table @TABLE@ (continued)","latex_data_label":"tab:@TABLE@-data","latex_null":"\\\\textit{NULL}","mediawiki_structure_or_data":"data","mediawiki_caption":"something","mediawiki_headers":"something","ods_null":"NULL","ods_structure_or_data":"data","odt_structure_or_data":"structure_and_data","odt_relation":"something","odt_comments":"something","odt_mime":"something","odt_columns":"something","odt_null":"NULL","pdf_report_title":"","pdf_structure_or_data":"data","phparray_structure_or_data":"data","sql_include_comments":"something","sql_header_comment":"","sql_compatibility":"NONE","sql_structure_or_data":"structure_and_data","sql_create_table":"something","sql_auto_increment":"something","sql_create_view":"something","sql_procedure_function":"something","sql_create_trigger":"something","sql_backquotes":"something","sql_type":"INSERT","sql_insert_syntax":"both","sql_max_query_size":"50000","sql_hex_for_binary":"something","sql_utc_time":"something","texytext_structure_or_data":"structure_and_data","texytext_null":"NULL","yaml_structure_or_data":"data","":null,"as_separate_files":null,"csv_removeCRLF":null,"csv_columns":null,"excel_removeCRLF":null,"excel_columns":null,"htmlword_columns":null,"json_pretty_print":null,"ods_columns":null,"sql_dates":null,"sql_relation":null,"sql_mime":null,"sql_use_transaction":null,"sql_disable_fk":null,"sql_views_as_tables":null,"sql_metadata":null,"sql_drop_database":null,"sql_drop_table":null,"sql_if_not_exists":null,"sql_truncate":null,"sql_delayed":null,"sql_ignore":null,"texytext_columns":null}');
 
 -- --------------------------------------------------------
 
@@ -542,7 +585,7 @@ CREATE TABLE `pma__recent` (
 --
 
 INSERT INTO `pma__recent` (`username`, `tables`) VALUES
-('root', '[{"db":"blog","table":"post"},{"db":"blog","table":"user"},{"db":"blog","table":"admin"},{"db":"mcq","table":"user"},{"db":"mcq","table":"answers"},{"db":"mcq","table":"questions"},{"db":"ide","table":"leaderboard"},{"db":"ide","table":"length_table"},{"db":"ide","table":"questions"},{"db":"ide","table":"users"}]');
+('root', '[{"db":"blog","table":"post"},{"db":"blog","table":"comments"},{"db":"blog","table":"admin"},{"db":"blog","table":"user"},{"db":"mcq","table":"user"},{"db":"mcq","table":"answers"},{"db":"mcq","table":"questions"},{"db":"ide","table":"leaderboard"},{"db":"ide","table":"length_table"},{"db":"ide","table":"questions"}]');
 
 -- --------------------------------------------------------
 
@@ -618,6 +661,7 @@ CREATE TABLE `pma__table_uiprefs` (
 --
 
 INSERT INTO `pma__table_uiprefs` (`username`, `db_name`, `table_name`, `prefs`, `last_update`) VALUES
+('root', 'blog', 'user', '{"sorted_col":"`user`.`username` ASC"}', '2016-05-27 14:37:25'),
 ('root', 'test', 'gyanuser', '{"CREATE_TIME":"2016-04-08 23:59:49","col_visib":["1","1","1","1","1","1","1","1"]}', '2016-04-08 18:32:35');
 
 -- --------------------------------------------------------
@@ -823,7 +867,7 @@ ALTER TABLE `pma__column_info`
 -- AUTO_INCREMENT for table `pma__export_templates`
 --
 ALTER TABLE `pma__export_templates`
-  MODIFY `id` int(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(5) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `pma__history`
 --

@@ -13,10 +13,11 @@
   </head>
   <body>
     <header>
+      <a href="ReachMe.php">Reach Me</a>
       <?php
         session_start();
         $link=mysql_connect('localhost','root','') or die(mysql_error());
-        $db=mysql_select_db("blog",$link) or die("Error in Database") or die(mysql_error());
+        $db=mysql_select_db("blog",$link) or die("Error in Database");
         if(!isset($_SESSION['login_status1']))
         $_SESSION['login_status1']=NULL;
         if(!isset($_SESSION['login_status2']))
@@ -31,7 +32,7 @@
       Login
       <form action="" method="post">
         <label>Username</label>
-        <input type="text" name="name" required>
+        <input placeholder="Username" type="text" name="name" required>
         <label>Password</label>
         <input type="password" name="password" required>
         <button type="submit" name="login" value="Login">Login</button>
@@ -75,6 +76,10 @@
         <input type="number" name="mobile" required>
         <label>Password</label>
         <input type="password" name="password" required>
+        <?php $pic=3;
+          echo "<img src=img/captcha/$pic.jpg height=40px width=120px>";
+        ?>
+        <input type="text" name="captcha" placeholder="Enter Captcha" required>
         <button type="submit" name="signup" value="Signup">Sign Up</button>
       </form>
       <?php
@@ -87,9 +92,16 @@
           $result1=mysql_query("SELECT * FROM user WHERE username='$name'",$link);
           $result2=mysql_query("SELECT * FROM user WHERE email='$email'",$link);
           $result3=mysql_query("SELECT * FROM admin WHERE name='$name'",$link);
+          $result4=mysql_query("SELECT * FROM captcha WHERE id='$pic'",$link);
           $count1=mysql_num_rows($result1);
           $count2=mysql_num_rows($result2);
           $count3=mysql_num_rows($result3);
+          $code=1;
+          if(mysql_num_rows($result4))
+          {
+            $code=mysql_fetch_assoc($result4);
+            $code=$code["code"];
+          }
           if($count1)
           {
             echo "Username already exists";
@@ -105,37 +117,76 @@
                 echo "Username already exists";
               }
               else
-              {
-                $result=mysql_query("INSERT INTO user VALUES ('$name','$password','$mobile','$email','0')",$link) or die(mysql_error());
-                if($result)
+                if($code!=$_POST["captcha"])
+                {
+                  echo "Wrong Captcha";
+                }
+                else
+                {
+                  $result=mysql_query("INSERT INTO user VALUES ('$name','$password','$mobile','$email')",$link) or die(mysql_error());
+                  if($result)
                   echo "Sign Up Successful. Please Login!!!";
-              }
+                }
         }
       ?>
     </header>
     <section>
       <?php
-        $posts=mysql_query("SELECT * FROM post ORDER BY date DESC LIMIT 5") or die(mysql_error());
-        while($post=mysql_fetch_assoc($posts))
+        $posts=mysql_query("SELECT * FROM post ORDER BY date DESC") or die(mysql_error());
+        $postcount=mysql_num_rows($posts);
+        $postperpage=2;
+        $pagecount=$postcount/$postperpage;
+        if(isset($_GET['p']))
         {
-          echo "Author: ", $post["auther"];
-          echo " Date: ", $post["date"];
-          echo " Time: ", $post["time"];
-          echo " Heading: ", $post["heading"];
-          echo " Content: ", $post["content"];
-          echo " Likes: ", $post["likes"], "<br>";
-          $id=$post["id"];
-          $comments=mysql_query("SELECT * FROM comments WHERE id='$id' LIMIT 5") or die(mysql_error());
-          $count=mysql_num_rows($comments);
-          if($count)
-            echo " Comments:  ";            
-          while($comment=mysql_fetch_assoc($comments))
-          {
-            echo "User: ", $comment["username"];
-            echo " ", $comment["comment"], " ";
-          }
-          echo "<br><br>";
+          $curpage=$_GET['p'];
         }
+        else
+        {
+          $curpage=0;
+        }      
+        if($curpage>$pagecount)
+          $curpage=0;
+        if($curpage<0)
+          $startpost=0;
+        else
+          $startpost=$curpage*$postperpage;
+        $previous=$curpage-1;
+        $next=$curpage+1;
+      ?>
+      <?php
+        $posts=mysql_query("SELECT * FROM post ORDER BY date DESC LIMIT $startpost, $postperpage") or die(mysql_error());
+        while($post=mysql_fetch_assoc($posts)):
+      ?>
+      <div>
+        <?php
+            $id=$post["id"];
+            echo "<a href=post.php?id=$id>";
+            echo "Author: ", $post["auther"];
+            echo " Date: ", $post["date"];
+            echo " Time: ", $post["time"];
+            echo " Heading: ", $post["heading"];
+            $content=substr($post["content"],0,100);
+            echo " Content: ", $content, "...";
+            echo " Likes: ", $post["likes"], "<br>";
+            $comments=mysql_query("SELECT * FROM comments WHERE id='$id' LIMIT 2") or die(mysql_error());
+            $count=mysql_num_rows($comments);
+            if($count)
+              echo " Comments: ";
+            while($comment=mysql_fetch_assoc($comments))
+            {
+              echo "User: ", $comment["username"];
+              echo " ", $comment["comment"], " ";
+            }
+            echo "<br><br>";
+            echo "</a>"
+        ?>
+      </div>
+      <?php
+        endwhile;
+        if($curpage>0)
+          echo "<a href='index.php?p=$previous'>Previous</a>";
+        if($curpage<$pagecount-1)
+          echo "<a href='index.php?p=$next'>Next</a>";
       ?>
     </section>
     <footer>
