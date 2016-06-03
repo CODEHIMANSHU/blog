@@ -11,183 +11,198 @@
       Blog
     </title>
   </head>
-  <body>
-    <header>
-      <a href="ReachMe.php">Reach Me</a>
-      <?php
-        session_start();
-        $link=mysql_connect('localhost','root','') or die(mysql_error());
-        $db=mysql_select_db("blog",$link) or die("Error in Database");
-        if(!isset($_SESSION['login_status1']))
+  <body class="blue-grey lighten-5">
+     <!--Checking Database Access and login status-->
+    <?php
+      session_start();
+      $link=mysql_connect('localhost','root','') or die(mysql_error());
+      $db=mysql_select_db("blog",$link) or die("Error in Database");
+      if(!isset($_SESSION['login_status1']))
         $_SESSION['login_status1']=NULL;
-        if(!isset($_SESSION['login_status2']))
+      if(!isset($_SESSION['login_status2']))
         $_SESSION['login_status2']=NULL;        
-        if($_SESSION['login_status1']==true)
-          header("Location:dashboard.php");
-        if($_SESSION['login_status2']==true)
-          header("Location:admin.php");        
-      ?>    
-      My Blog
-      <!--login-->
-      Login
-      <form action="" method="post">
-        <label>Username</label>
-        <input placeholder="Username" type="text" name="name" required>
-        <label>Password</label>
-        <input type="password" name="password" required>
-        <button type="submit" name="login" value="Login">Login</button>
-      </form>
-      <?php
-      if(isset($_POST["login"]))
-      {
-        $name=$_POST["name"];
-        $password=$_POST["password"];
-        $result=mysql_query("SELECT * FROM user WHERE username='$name' AND password='$password'",$link);
-        $count=mysql_num_rows($result);
-        if($count)
-        {
-          $_SESSION['login_status1']=true;
-          $_SESSION['user']=$name;
-          header("location:dashboard.php");
-        }
-        else
-        {
-          $result=mysql_query("SELECT * FROM admin WHERE name='$name' AND password='$password'",$link);
-          $count=mysql_num_rows($result);
-          if($count)
-          {
-            $_SESSION['login_status2']=true;
-            $_SESSION['user']=$name;
-            header("location:admin.php");
-          }
-          else
-            echo "Wrong Username or Password";
-        }
-      }
-      ?>
-      <!--signup-->
-      Sign Up
-      <form action="" method="post">
-        <label>Username</label>
-        <input type="text" name="name" required>
-        <label>Email</label>
-        <input type="email" name="email" required>
-        <label>Mobile</label>
-        <input type="number" name="mobile" required>
-        <label>Password</label>
-        <input type="password" name="password" required>
-        <?php $pic=3;
-          echo "<img src=img/captcha/$pic.jpg height=40px width=120px>";
-        ?>
-        <input type="text" name="captcha" placeholder="Enter Captcha" required>
-        <button type="submit" name="signup" value="Signup">Sign Up</button>
-      </form>
-      <?php
-        if(isset($_POST["signup"]))
-        {
-          $name=$_POST["name"];
-          $email=$_POST["email"];
-          $mobile=$_POST["mobile"];
-          $password=$_POST["password"];
-          $result1=mysql_query("SELECT * FROM user WHERE username='$name'",$link);
-          $result2=mysql_query("SELECT * FROM user WHERE email='$email'",$link);
-          $result3=mysql_query("SELECT * FROM admin WHERE name='$name'",$link);
-          $result4=mysql_query("SELECT * FROM captcha WHERE id='$pic'",$link);
-          $count1=mysql_num_rows($result1);
-          $count2=mysql_num_rows($result2);
-          $count3=mysql_num_rows($result3);
-          $code=1;
-          if(mysql_num_rows($result4))
-          {
-            $code=mysql_fetch_assoc($result4);
-            $code=$code["code"];
-          }
-          if($count1)
-          {
-            echo "Username already exists";
-          }
-          else
-            if($count2)
-            {
-              echo "Email already exists";
-            }
-            else
-              if($count3)
-              {
-                echo "Username already exists";
-              }
-              else
-                if($code!=$_POST["captcha"])
-                {
-                  echo "Wrong Captcha";
-                }
-                else
-                {
-                  $result=mysql_query("INSERT INTO user VALUES ('$name','$password','$mobile','$email')",$link) or die(mysql_error());
-                  if($result)
-                  echo "Sign Up Successful. Please Login!!!";
-                }
-        }
-      ?>
+      if($_SESSION['login_status1']==true)
+        header("Location:dashboard.php");
+      if($_SESSION['login_status2']==true)
+        header("Location:admin.php");        
+    ?>
+    <header>
+      <!--navbar-->  
+      <nav class="blue-grey darken-1">
+        <div class="nav-wrapper">
+          <a class="brand-logo" href="index.php" style="padding-left:10%;">My Blog</a>
+          <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li><a href="ReachMe.php">Reach Us</a></li>
+          </ul>
+        </div>
+      </nav> 
     </header>
     <section>
-      <?php
-        $posts=mysql_query("SELECT * FROM post ORDER BY date DESC") or die(mysql_error());
-        $postcount=mysql_num_rows($posts);
-        $postperpage=2;
-        $pagecount=$postcount/$postperpage;
-        if(isset($_GET['p']))
-        {
-          $curpage=$_GET['p'];
-        }
-        else
-        {
-          $curpage=0;
-        }      
-        if($curpage>$pagecount)
-          $curpage=0;
-        if($curpage<0)
-          $startpost=0;
-        else
-          $startpost=$curpage*$postperpage;
-        $previous=$curpage-1;
-        $next=$curpage+1;
-      ?>
-      <?php
-        $posts=mysql_query("SELECT * FROM post ORDER BY date DESC LIMIT $startpost, $postperpage") or die(mysql_error());
-        while($post=mysql_fetch_assoc($posts)):
-      ?>
-      <div>
-        <?php
-            $id=$post["id"];
-            echo "<a href=post.php?id=$id>";
-            echo "Author: ", $post["auther"];
-            echo " Date: ", $post["date"];
-            echo " Time: ", $post["time"];
-            echo " Heading: ", $post["heading"];
-            $content=substr($post["content"],0,100);
-            echo " Content: ", $content, "...";
-            echo " Likes: ", $post["likes"], "<br>";
-            $comments=mysql_query("SELECT * FROM comments WHERE id='$id' LIMIT 2") or die(mysql_error());
-            $count=mysql_num_rows($comments);
-            if($count)
-              echo " Comments: ";
-            while($comment=mysql_fetch_assoc($comments))
+    <br>
+      <div class="container">
+        <div class="row ">
+          <div class="col s5 center blue-grey lighten-4">
+            <!--login-->
+            Login
+            <form action="" method="post">
+              <input placeholder="Username" type="text" name="name" required>
+              <input placeholder="Password" type="password" name="password" required>
+              <button type="submit" name="login" style="visibility: hidden;"><a class="waves-effect waves-light btn" style="visibility: visible;">Log In</a></button>
+            </form>
+            <?php
+            if(isset($_POST["login"]))
             {
-              echo "User: ", $comment["username"];
-              echo " ", $comment["comment"], " ";
+              $name=$_POST["name"];
+              $password=$_POST["password"];
+              $result=mysql_query("SELECT * FROM user WHERE username='$name' AND password='$password'",$link);
+              $count=mysql_num_rows($result);
+              if($count)
+              {
+                $_SESSION['login_status1']=true;
+                $_SESSION['user']=$name;
+                header("location:dashboard.php");
+              }
+              else
+              {
+                $result=mysql_query("SELECT * FROM admin WHERE name='$name' AND password='$password'",$link);
+                $count=mysql_num_rows($result);
+                if($count)
+                {
+                  $_SESSION['login_status2']=true;
+                  $_SESSION['user']=$name;
+                  header("location:admin.php");
+                }
+                else
+                  echo "Wrong Username or Password";
+              }
             }
-            echo "<br><br>";
-            echo "</a>"
+            ?>
+          </div>
+          <div class="col s2">
+            &nbsp;
+          </div>
+          <div class="col s5 center blue-grey lighten-4">
+            <!--signup-->
+            Sign Up
+            <form action="" method="post">
+              <input placeholder="Username" type="text" name="name" required>
+              <input placeholder="Email" type="email" name="email" required>
+              <input placeholder="Mobile" type="number" name="mobile" required>
+              <input placeholder="Password" type="password" name="password" required>
+              <button type="submit" name="signup" value="Signup" style="visibility: hidden;"><a class="waves-effect waves-light btn" style="visibility: visible;">Sign Up</a></button>
+            </form>
+            <?php
+              if(isset($_POST["signup"]))
+              {
+                $name=$_POST["name"];
+                $email=$_POST["email"];
+                $mobile=$_POST["mobile"];
+                $password=$_POST["password"];
+                $result1=mysql_query("SELECT * FROM user WHERE username='$name'",$link);
+                $result2=mysql_query("SELECT * FROM user WHERE email='$email'",$link);
+                $result3=mysql_query("SELECT * FROM admin WHERE name='$name'",$link);
+                $count1=mysql_num_rows($result1);
+                $count2=mysql_num_rows($result2);
+                $count3=mysql_num_rows($result3);
+                if($count1)
+                {
+                  echo "Username already exists";
+                }
+                else
+                  if($count2)
+                  {
+                    echo "Email already exists";
+                  }
+                  else
+                    if($count3)
+                    {
+                      echo "Username already exists";
+                    }
+                    else
+                      {
+                        $result=mysql_query("INSERT INTO user VALUES ('$name','$password','$mobile','$email')",$link) or die(mysql_error());
+                        if($result)
+                        echo "Sign Up Successful. Please Login!!!";
+                      }
+              }
+            ?>
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        <?php
+          $posts=mysql_query("SELECT * FROM post ORDER BY date DESC") or die(mysql_error());
+          $postcount=mysql_num_rows($posts);
+          $postperpage=2;
+          $pagecount=$postcount/$postperpage;
+          if(isset($_GET['p']))
+          {
+            $curpage=$_GET['p'];
+          }
+          else
+          {
+            $curpage=0;
+          }      
+          if($curpage>$pagecount)
+            $curpage=0;
+          if($curpage<0)
+            $startpost=0;
+          else
+            $startpost=$curpage*$postperpage;
+          $previous=$curpage-1;
+          $next=$curpage+1;
+        ?>
+        <?php
+          $posts=mysql_query("SELECT * FROM post ORDER BY date DESC LIMIT $startpost, $postperpage") or die(mysql_error());
+          while($post=mysql_fetch_assoc($posts)):
+        ?>
+        <?php $id=$post["id"]; ?>
+        <a href="post.php?id=<?php echo $id; ?>">
+          <div class=row>
+            <div class="card blue-grey darken-1">
+              <div class="card-content white-text">
+                <span class="card-title"><?php echo $post["heading"]; ?></span>
+                <p><?php $content=substr($post["content"],0,100); echo $content; ?>...</p>
+              </div>
+              <div class="card-action">
+                <a><?php echo $post["auther"]; ?></a>
+                <a><?php echo $post["date"]; ?></a>
+                <a><?php echo $post["time"]; ?></a>
+                <a><?php echo $post["likes"]; ?></a>
+              </div>
+              <?php
+                $comments=mysql_query("SELECT * FROM comments WHERE id='$id' LIMIT 2") or die(mysql_error());
+                $count=mysql_num_rows($comments);
+                if($count):
+              ?>
+
+              <div class="card-action">
+                <a>
+                  <?php echo " Comments: ";
+                    while($comment=mysql_fetch_assoc($comments))
+                    {
+                      echo "User: ", $comment["username"];
+                      echo " ", $comment["comment"], " ";
+                    }
+                    endif;
+                  ?>    
+                </a>
+              </div>
+            </div>
+          </div>
+        </a>
+        <?php endwhile; ?>
+      </div> 
+      <br>
+      <div class="center">
+        <?php
+          if($curpage>0)
+            echo "<a href='index.php?p=$previous'>Previous</a>";
+          echo "&nbsp;";
+          if($curpage<$pagecount-1)
+            echo "<a href='index.php?p=$next'>Next</a>";
         ?>
       </div>
-      <?php
-        endwhile;
-        if($curpage>0)
-          echo "<a href='index.php?p=$previous'>Previous</a>";
-        if($curpage<$pagecount-1)
-          echo "<a href='index.php?p=$next'>Next</a>";
-      ?>
     </section>
     <footer>
       
