@@ -15,6 +15,7 @@
      <!--Checking Database Access and login status-->
     <?php
       session_start();
+      error_reporting(0);
       $link=mysql_connect('localhost','root','') or die(mysql_error());
       $db=mysql_select_db("blog",$link) or die("Error in Database");
       if(!isset($_SESSION['login_status1']))
@@ -27,21 +28,25 @@
         header("Location:admin.php");        
     ?>
     <header>
-      <!--navbar-->  
-      <nav class="blue-grey darken-1">
-        <div class="nav-wrapper">
+      <!--navbar--> 
+      <div class="navbar-fixed"> 
+        <nav class="blue-grey darken-1" style="z-index: 7;">
           <a class="brand-logo" href="index.php" style="padding-left:10%;">My Blog</a>
-          <ul id="nav-mobile" class="right hide-on-med-and-down">
+          <ul id="slide-out" class="side-nav">
             <li><a href="ReachMe.php">Reach Us</a></li>
           </ul>
-        </div>
-      </nav> 
+          <ul class="right hide-on-med-and-down fixed">
+            <li><a href="ReachMe.php">Reach Us</a></li>
+          </ul>
+          <a href="#" data-activates="slide-out" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
+        </nav>
+      </div> 
     </header>
     <section>
     <br>
       <div class="container">
         <div class="row ">
-          <div class="col s5 center blue-grey lighten-4">
+          <div class="col s5 center blue-grey lighten-4" style="border-radius: 10px;padding: 20px 30px 10px 30px; margin-top: 50px;">
             <!--login-->
             Login
             <form action="" method="post">
@@ -81,7 +86,7 @@
           <div class="col s2">
             &nbsp;
           </div>
-          <div class="col s5 center blue-grey lighten-4">
+          <div class="col s5 center blue-grey lighten-4" style="border-radius: 10px;padding: 20px 30px 10px 30px;">
             <!--signup-->
             Sign Up
             <form action="" method="post">
@@ -160,34 +165,33 @@
         <a href="post.php?id=<?php echo $id; ?>">
           <div class=row>
             <div class="card blue-grey darken-1">
-              <div class="card-content white-text">
+              <div class="card-content white-text" style="overflow-wrap: break-word;>
                 <span class="card-title"><?php echo $post["heading"]; ?></span>
                 <p><?php $content=substr($post["content"],0,100); echo $content; ?>...</p>
               </div>
-              <div class="card-action">
-                <a><?php echo $post["auther"]; ?></a>
-                <a><?php echo $post["date"]; ?></a>
-                <a><?php echo $post["time"]; ?></a>
-                <a><?php echo $post["likes"]; ?></a>
+              <div class="card-action" style="padding-top: 5px;padding-bottom: 5px;">
+                <a ><?php echo "Author: ",$post["auther"]; ?></a>
+                <a ><?php echo "Date: ",  $post["date"]; ?></a>
+                <a ><?php echo "Time: ",  $post["time"]; ?></a>
+                <a class="right"><?php echo "Likes: ", $post["likes"]; ?></a>
               </div>
-              <?php
+               <?php
                 $comments=mysql_query("SELECT * FROM comments WHERE id='$id' LIMIT 2") or die(mysql_error());
                 $count=mysql_num_rows($comments);
                 if($count):
               ?>
-
-              <div class="card-action">
+              <div class="card-action" style="padding-top: 5px;padding-bottom: 5px; background-color:white">
                 <a>
-                  <?php echo " Comments: ";
+                  <?php
                     while($comment=mysql_fetch_assoc($comments))
                     {
-                      echo "User: ", $comment["username"];
-                      echo " ", $comment["comment"], " ";
+                      echo $comment["username"];
+                      echo ": ", $comment["comment"], "<br>";
                     }
-                    endif;
                   ?>    
                 </a>
               </div>
+              <?php endif; ?>
             </div>
           </div>
         </a>
@@ -196,19 +200,26 @@
       <br>
       <div class="center">
         <?php
-          if($curpage>0)
-            echo "<a href='index.php?p=$previous'>Previous</a>";
-          echo "&nbsp;";
-          if($curpage<$pagecount-1)
-            echo "<a href='index.php?p=$next'>Next</a>";
+          if($curpage>0):
         ?>
+          <a class="waves-effect waves-light btn" href=index.php?p=<?php echo $previous;?>>Previous</a>
+          &nbsp;
+        <?php
+          endif;
+          if($curpage<$pagecount-1):
+        ?>
+          <a class="waves-effect waves-light btn" href=index.php?p=<?php echo $next;?>>Next</a>
+        <?php
+          endif;
+        ?>
+        
       </div>
     </section>
     <footer>
-      
+    &nbsp;
     </footer>
       <!--Import jQuery before materialize.js-->
-    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="js/jquery-2.1.4.min.js"></script>
     <script src="js/materialize.js"></script>
     <script src="js/init.js"></script>
   </body>
