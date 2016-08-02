@@ -136,7 +136,17 @@
             }
           ?>
         </div>
+        <?php
+          $_SESSION["heading"]=$post["heading"];
+          $_SESSION["content"]=$post["content"];
+          $_SESSION["image"]=$post["image"];
+          $_SESSION["id"]=$id;
+        ?>
         <div class="row center">
+          <form action="editpost.php" method="post">
+            <button type="submit" class="waves-effect waves-light btn red" name="editpost">Edit Post</button>
+          </form>
+          <br>
           Delete a Comment 
           <form action="" method=post>
             <input type="number" name="refid" style="width:100px;" placeholder="Ref.ID">
@@ -176,11 +186,6 @@
           ?>
         </div>
       </div>
-
-
-
-
-
     </section>
     <footer>
       
