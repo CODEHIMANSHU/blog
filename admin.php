@@ -48,13 +48,13 @@
           <div class="col m2">
             &nbsp;
           </div>
-          <div class="col m8  blue-grey lighten-4" style="border-radius: 10px;padding: 0px 30px 10px 30px; margin-top: 50px;"">
+          <div class="col m8  blue-grey lighten-4" style="border-radius: 10px;padding: 0px 30px 10px 30px; margin-top: 50px;">
             <h5 style="margin-top:0px;"><p align="center">Add a new Post</p></h5>
             <form action="" method="post" enctype="multipart/form-data">
-              <input placeholder="Heading" type="text" name="heading" required>
-              <input placeholder="Your HTML content" type="text" name="content" required>
-              <input type="file" name="image">
-              <button class="waves-effect waves-light btn" type="submit" name="add" style="margin-left:43%;">POST</button> 
+              <input placeholder="Heading" type="text" name="heading" required />
+              <input placeholder="Your HTML content" type="text" name="content" required />
+              <input type="file" name="image" />
+              <input class="waves-effect waves-light btn" type="submit" value="POST" name="add" style="margin-left:43%;"></input> 
             </form>
           </div>
           <div class="col m2">
@@ -65,8 +65,11 @@
           <?php
             if(isset($_POST["add"]))
             {
-              if(isset($_POST['image']))
+              echo "llll";
+              //var_dump($_POST["image"]);
+              if($_FILES["image"])
               {
+                echo "Ulllla";
                 $file=$_FILES['image']['tmp_name'];
                 $image=addslashes(file_get_contents($file));
                 $image_name=addslashes($_FILES['image']['name']);
@@ -83,7 +86,7 @@
               $date=date("Y-m-d");
               $time=date("H:i:s");
               $auther=$_SESSION['user'];
-              $result=mysql_query("INSERT INTO post VALUES ('','$auther','$date','$time','$heading','$content','$image','0')",$link) or die(mysql_error());
+              $result=mysql_query("INSERT INTO post VALUES ('','$auther','$date','$time','$heading','$content','$image','0')",$link) ;
               if($result)
                 echo "<p align=center>POST Added Successfully!!!</p>";
             }

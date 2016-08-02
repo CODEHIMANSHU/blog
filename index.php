@@ -15,8 +15,8 @@
      <!--Checking Database Access and login status-->
     <?php
       session_start();
-      error_reporting(0);
-      $link=mysql_connect('localhost','root','') or die(mysql_error());
+      //error_reporting(0);
+      $link = mysql_connect('localhost','root','') or die(mysql_error());
       $db=mysql_select_db("blog",$link) or die("Error in Database");
       if(!isset($_SESSION['login_status1']))
         $_SESSION['login_status1']=NULL;

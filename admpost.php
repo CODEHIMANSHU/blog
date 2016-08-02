@@ -62,7 +62,8 @@
                 </span>
                 <form action="" method=post>
                   <?php
-                    $result=mysql_query("SELECT * FROM likes WHERE id='$id' AND user='$user'",$link);
+                    $result=mysql_query("SELECT * FROM likes WHERE id='$id' AND user='$user'",$link) or die(mysql_error());
+                    //$result=mysql_fetch_assoc($result);
                     $resultcount=mysql_num_rows($result);
                     if(!$resultcount)
                       echo "<button class='waves-effect waves-light btn right' type=submit name=like>Like</button>";
