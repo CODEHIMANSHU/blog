@@ -117,11 +117,13 @@
               {
                 $result1=mysql_query("UPDATE post SET likes=likes+1 WHERE id='$id'",$link);
                 $result2=mysql_query("INSERT INTO likes values ('','$user','$id')",$link);
+                header("Refresh:0");
               }
               else
               {
                 $result1=mysql_query("UPDATE post SET likes=likes-1 WHERE id='$id'",$link) or die(mysql_error());
                 $result2=mysql_query("DELETE FROM likes WHERE id='$id' AND user='$user'",$link) or die(mysql_error());
+                header("Refresh:0");
               }
             }
           ?>
@@ -130,6 +132,7 @@
             {
               $newcomment=$_POST["newcomment"];
               $result=mysql_query("INSERT INTO comments values ('','$id','$user','$newcomment')",$link);
+              header("Refresh:0");
             }
           ?>
         </div>
@@ -148,6 +151,7 @@
               if($result)
               {
                 echo "Comment Deleted!!!";
+                header("Refresh:0");
               }
             }
           ?>
@@ -165,7 +169,8 @@
               $result3=mysql_query("DELETE FROM likes WHERE id=$id",$link);  
               if($result1&&$result2&&$result3)
               {
-                echo "Comment Deleted Successfully";
+                echo "POST Deleted Successfully";
+                header("Refresh:0");
               }       
             }
           ?>
