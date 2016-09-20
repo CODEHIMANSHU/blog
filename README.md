@@ -9,7 +9,7 @@ The project is running on XAMPP server, so Ubuntu is probably the best environme
 
 ## Setup Database
 
-1. Import the blog.sql file to phpmyadmin.
+1. Import the blog.sql file to phpmyadmin
 
 2. The admin login credentials are:
 	username:admin1 password:admin1
